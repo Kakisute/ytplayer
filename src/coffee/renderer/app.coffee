@@ -7,11 +7,19 @@ req = remote.require "./dest/js/browser/main"
 App = React.createClass
     getInitialState: ->
         username: "AnimeSongCollabo"
-        channelId: ""
+        playing: ""
         playlistId: ""
         playlists: []
+        player: null
 
     componentDidMount: ->
+        tag = document.createElement('script')
+        tag.src = "https://www.youtube.com/iframe_api"
+        firstScriptTag = document.getElementsByTagName('script')[0]
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag)
+
+        onYouTubeIframeAPIReady = () -> return
+
         req.channelId this.state.username, ((err, res) ->
             this.setState channelId: res.body.items[0].id
 
@@ -25,9 +33,9 @@ App = React.createClass
                 this.state.playlists.map ((x, i) ->
                     req.playlistItems x.id, ((err, res) ->
                         playlistItems = res.body.items.map (x, j) ->
-                            id: x.id
+                            id: x.snippet.resourceId.videoId
                             title: x.snippet.title
-                            description: x.snippet.description
+                            description: x.snippet.description.split("\n").map (l, i) -> <p key={i}>{l}</p>
                             thumbnail: x.snippet.thumbnails.default.url
                         playlists = this.state.playlists
                         playlists[i].playlistItems = playlistItems
@@ -39,11 +47,35 @@ App = React.createClass
         return
 
     _onPlaylistItemClick: (index) ->
-        console.log this.state.playlists[index[0]].playlistItems[index[1]]
+        playing = this.state.playlists[index[0]].playlistItems[index[1]]
+        this.setState playing: playing
+
+        dom = document.querySelector "iframe#player"
+        if dom
+            console.log dom
+            dom.parentNode.removeChild dom
+            div = document.createElement "div"
+            div.id = "player"
+            element = document.getElementById("main")
+            element.parentNode.insertBefore div, element
+
+        this.setState player: null
+        this.setState player:
+            new YT.Player 'player',
+                height: '120'
+                width: '200'
+                videoId: playing.id
+                #events:
+                    #'onReady': onPlayerReady,
+                    #'onStateChange': onPlayerStateChange
         return
 
     render: ->
         <div>
+            <div>
+                <p>{this.state.playing.title}</p>
+                {this.state.playing.description}
+            </div>
             <div>
                 <ul>
                 {this.state.playlists.map ((x, i) ->
