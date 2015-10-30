@@ -11,14 +11,13 @@ App = React.createClass
         playlistId: ""
         playlists: []
         player: null
+        mode: "loop" # 'loop' or 'list' or 'mylist'
 
     componentDidMount: ->
         tag = document.createElement('script')
         tag.src = "https://www.youtube.com/iframe_api"
         firstScriptTag = document.getElementsByTagName('script')[0]
         firstScriptTag.parentNode.insertBefore(tag, firstScriptTag)
-
-        onYouTubeIframeAPIReady = () -> return
 
         req.channelId this.state.username, ((err, res) ->
             this.setState channelId: res.body.items[0].id
@@ -40,6 +39,11 @@ App = React.createClass
                         playlists = this.state.playlists
                         playlists[i].playlistItems = playlistItems
                         this.setState playlists: playlists
+                        if i == playlists.length-1
+                            this.setState player: new YT.Player 'player',
+                                height: '120'
+                                width: '200'
+
                     ).bind this
                 ).bind this
             ).bind this
@@ -47,34 +51,39 @@ App = React.createClass
         return
 
     _onPlaylistItemClick: (index) ->
-        playing = this.state.playlists[index[0]].playlistItems[index[1]]
-        this.setState playing: playing
+        mode = this.state.mode
+        if mode == "loop"
+            playlistItems = this.state.playlists[index[0]].playlistItems
+            #this.setState playing: playing
+            player = this.state.player
+            console.log player
+            player.cuePlaylist(playlistItems.map (x, i) -> x.id)
+            player.setLoop true
+            this.setState player: player
+            return
+        else if mode == "list"
+            return
+        else
+            return
 
-        dom = document.querySelector "iframe#player"
-        if dom
-            console.log dom
-            dom.parentNode.removeChild dom
-            div = document.createElement "div"
-            div.id = "player"
-            element = document.getElementById("main")
-            element.parentNode.insertBefore div, element
-
-        this.setState player: null
-        this.setState player:
-            new YT.Player 'player',
-                height: '120'
-                width: '200'
-                videoId: playing.id
-                #events:
-                    #'onReady': onPlayerReady,
-                    #'onStateChange': onPlayerStateChange
-        return
+    _onAllPlay: ->
+        playlists = this.state.playlists
+        idList = []
+        for i in [0..playlists.length-17]
+            Array.prototype.push.apply idList, playlists[i].playlistItems.map (x, i) -> x.id
+        console.log idList.length
+        player = this.state.player
+        console.log player
+        player.cuePlaylist(idList)
+        player.setLoop true
+        this.setState player: player
 
     render: ->
         <div>
             <div>
                 <p>{this.state.playing.title}</p>
                 {this.state.playing.description}
+                <button onClick={this._onAllPlay}>ALLPlay</button>
             </div>
             <div>
                 <ul>
