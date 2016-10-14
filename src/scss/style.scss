@@ -1,34 +1,10 @@
+@import url(http://fonts.googleapis.com/earlyaccess/notosansjp.css);
+
 * {
 	margin: 0;
 	padding: 0;
 }
-#main {
-	img {
-		width: 20px;
-		height: 15px;
-	}
-	ul {
-		list-style: none;
-	}
-	li {
-		font-size: 12px;
-	}
-	.list > li {
-		background-color: #555;
-	}
-	.items > li {
-		background-color: #aaa;
-		border-bottom: 2px solid #555;
-	}
-	.box {
-		display: flex;
-		flex-direction: row;
-		justify-content: space-between;
-	}
-	.left {
-		flex: 1;
-	}
-	.right {
-		flex: 1;
-	}
+
+body {
+	font-family: 'Noto Sans JP', sans-serif;
 }

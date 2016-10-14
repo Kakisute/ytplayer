@@ -9,14 +9,17 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "react": "^0.14.1",
-    "react-dom": "^0.14.1",
-    "superagent": "^1.4.0",
-    "superagent-retry": "^0.5.1"
+    "electron": "^1.4.3",
+    "electron-prebuilt": "^1.4.3",
+    "material-ui": "^0.16.0",
+    "react": "^15.3.2",
+    "react-dom": "^15.3.2",
+    "superagent": "^2.3.0",
+    "superagent-retry": "^0.6.0"
   },
   "devDependencies": {
-    "browserify": "^12.0.1",
-    "coffee-reactify": "^4.0.0",
+    "browserify": "^13.1.0",
+    "coffee-reactify": "^5.1.0",
     "coffee-script": "^1.10.0",
     "gulp": "^3.9.0",
     "gulp-browserify": "^0.5.1",
