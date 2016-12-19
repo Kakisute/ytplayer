@@ -123,7 +123,7 @@ App = React.createClass
             mylist = mylist.filter (x, i) -> x.id != selected.id
             this.setState mylist: mylist, selected: null
         else
-            mylist.push selected
+            mylist.unshift selected
             this.setState mylist: mylist, selected: selected.description.map (l,i) -> <p key={i}>{l}</p>
 
     _onPlaylistClick: (index) ->
